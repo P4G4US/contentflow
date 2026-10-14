@@ -1,17 +1,19 @@
 # ContentFlow — Client Approval Portal
 
-A working, self-hosted MVP for video editors and social-media managers. Submit video drafts, share private client-review links, gather approvals or requested changes, and see status in your admin dashboard.
+A working, self-hosted MVP for video editors and social-media managers. Submit social content drafts, share private client-review links, gather approvals or requested changes, and see status in your admin dashboard.
 
 ## What's included
 
 - Password-protected **admin dashboard** and client management
-- Upload MP4, MOV, WEBM, M4V reels (250 MB default maximum)
+- Submit Stories (one image or video), Reels (one video), or Carousels (up to 10 images); 250 MB maximum per submission by default
 - Proposed captions and publishing dates
-- Separate private client links with video preview
-- One-click client approval or written revision requests
+- Separate private client links with image and video previews plus per-file downloads
+- One-click client approval or text and voice revision requests with playback
 - Resubmit an item for another approval round
-- Optional SMTP email when a reel is submitted, resubmitted, or reviewed
-- SQLite data store and persistent local video storage
+- Per-client announcement banners that admins can update or clear
+- Admin controls to delete content or clients and remove their stored media
+- Optional SMTP email when content is submitted, resubmitted, or reviewed
+- SQLite data store and persistent local media storage
 - Responsive interface, Docker support, and no paid dependencies required to run locally
 
 **Not yet implemented:** automatic import from Google Drive, Instagram/Meta publishing, calendar view, replacement of video on the same post, analytics, WhatsApp notifications, multi-admin authentication, automated reminders. An approval **does not** publish the video. Keep manual publishing until a Meta-approved publishing integration is configured.

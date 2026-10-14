@@ -20,4 +20,45 @@ function postModal(){if(!clients.length){toast('Create a client first');return}l
 async function renderPortal(){try{let {client,posts:items}=await api('/api/portal/'+encodeURIComponent(clientToken));let focus=query.get('post');if(focus)items.sort((a,b)=>(a.id==focus?-1:b.id==focus?1:0));app.innerHTML=`<div class="portal"><div class="portaltop"><div class="logo" style="color:#212b40;margin:0">Content<span>Flow</span></div><span class="micro">Client review portal</span></div><h1>${e(client.name)} — Content review</h1><p class="muted" style="margin-bottom:35px">Preview content, approve it or request changes. Your feedback goes directly to your content manager.</p>${items.length?items.map(p=>`<article class="reviewcard" id="post-${p.id}"><div>${p.filename?`<video controls preload="metadata" src="/api/video/${p.id}?token=${encodeURIComponent(clientToken)}"></video>`:`<div class="empty" style="background:#f5f6f9;border-radius:10px">No video uploaded</div>`}</div><div><span class="pill ${e(p.status)}">${e(status(p.status))}</span><h2 style="margin-top:18px">${e(p.title)}</h2><p class="micro">Proposed publishing: ${e(fmt(p.publish_at))}</p><label style="margin-top:22px">Proposed caption</label><div class="caption">${e(p.caption||'No caption provided')}</div>${p.status==='pending'?`<div class="reviewactions"><button class="btn" data-approve="${p.id}">✓ Approve content</button><button class="btn ghost" data-changes="${p.id}">Request changes</button></div>`:p.status==='changes'?`<p class="muted"><b>Your feedback:</b> ${e(p.feedback)}</p>`:`<p class="muted">Thank you — this item is approved. Your content manager will handle publishing.</p>`}</div></article>`).join(''):`<div class="panel empty">No content to review yet.</div>`}<p class="micro">This is a private link. Please do not share it with anyone outside your team.</p></div>`;
 document.querySelectorAll('[data-approve]').forEach(b=>b.onclick=async()=>{if(!confirm('Approve this content for publishing?'))return;try{await api(`/api/portal/${encodeURIComponent(clientToken)}/posts/${b.dataset.approve}/decision`,json('POST',{action:'approve'}));toast('Content approved');go()}catch(err){toast(err.message)}});document.querySelectorAll('[data-changes]').forEach(b=>b.onclick=()=>{let id=b.dataset.changes;let m=modal(`<div class="head"><h2>Request changes</h2><button class="close">×</button></div><form><div class="field"><label>What should be changed?</label><textarea required maxlength="2000" name="feedback" placeholder="Example: Please replace the first shot and shorten the ending."></textarea></div><button class="btn bad">Send feedback</button></form>`);m.querySelector('form').onsubmit=async ev=>{ev.preventDefault();try{await api(`/api/portal/${encodeURIComponent(clientToken)}/posts/${id}/decision`,json('POST',{action:'changes',feedback:new FormData(ev.target).get('feedback')}));m.remove();toast('Feedback sent');go()}catch(err){toast(err.message)}}})}catch(err){app.innerHTML=`<div class="login panel"><h2>Portal unavailable</h2><p>${e(err.message)}</p></div>`}}
 go();
-</script></body></html>
+</script>
+<script>
+const appRoot = document.querySelector('#app');
+const navObserver = new MutationObserver(() => {
+	appRoot.querySelectorAll('.sidebar .nav:not([data-nav-ready])').forEach((item) => {
+		item.dataset.navReady = 'true';
+		item.setAttribute('role', 'button');
+		item.tabIndex = 0;
+	});
+});
+navObserver.observe(appRoot, { childList: true, subtree: true });
+
+function navigateAdmin(item) {
+	const label = item.textContent.trim();
+	const panels = document.querySelectorAll('.main > .panel');
+	const target = label.includes('Content review')
+		? panels[0]
+		: label.includes('Clients')
+			? panels[1]
+			: document.querySelector('.main');
+	if (!target) return;
+	document.querySelectorAll('.sidebar .nav').forEach((nav) => {
+		nav.classList.toggle('active', nav === item);
+	});
+	target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+document.addEventListener('click', (event) => {
+	const item = event.target.closest('.sidebar .nav');
+	if (item) navigateAdmin(item);
+});
+
+document.addEventListener('keydown', (event) => {
+	const item = event.target.closest('.sidebar .nav');
+	if (item && (event.key === 'Enter' || event.key === ' ')) {
+		event.preventDefault();
+		navigateAdmin(item);
+	}
+});
+</script>
+<script src="/static/admin.js" defer></script>
+</body></html>
