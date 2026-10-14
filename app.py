@@ -27,7 +27,7 @@ UPLOADS.mkdir(parents=True, exist_ok=True)
 DB = DATA / 'contentflow.sqlite'
 SECRET = os.getenv('APP_SECRET', 'local-dev-change-me')
 ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'change-me-before-deploying')
-PUBLIC_URL = os.getenv('PUBLIC_URL', 'http://localhost:8000').rstrip('/')
+PUBLIC_URL = os.getenv('PUBLIC_URL', os.getenv('RENDER_EXTERNAL_URL', 'http://localhost:8000')).rstrip('/')
 MAX_UPLOAD_MB = int(os.getenv('MAX_UPLOAD_MB', '250'))
 serializer = URLSafeTimedSerializer(SECRET, salt='admin-session')
 app = FastAPI(title='ContentFlow', docs_url=None, redoc_url=None)

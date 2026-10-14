@@ -56,6 +56,13 @@ Set `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_FROM` and 
 
 ## Deploying
 
+### Render
+
+1. Push `render.yaml` to GitHub, then create a Blueprint in Render and connect this repository's `main` branch.
+2. Set a strong `ADMIN_PASSWORD` when prompted and deploy. Render generates `APP_SECRET` automatically.
+3. The Blueprint uses a paid `0.5c-512mb` (Starter) web service and a 1 GB persistent disk for the database and uploads. Persistent storage incurs a recurring charge; increase the disk size if needed.
+4. Open the `*.onrender.com` URL shown by Render and sign in with the admin password you set. The app uses Render's assigned URL for client review links.
+
 - Push code to a **private GitHub repository** (never commit `.env` or `data/`).
 - Deploy the Docker container to a host with **persistent volume storage** for `/app/data` (database + videos). A host with an ephemeral filesystem will lose content on restart.
 - Set `PUBLIC_URL` to the real HTTPS domain and use strong random `APP_SECRET` and `ADMIN_PASSWORD`.
